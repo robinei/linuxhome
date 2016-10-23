@@ -1,0 +1,29 @@
+Config {
+  font = "xft:Noto Sans-9"
+  , bgColor = "#101010"
+  , fgColor = "grey"
+  , alpha = 192
+  , position = Top
+--  , lowerOnStart = True
+--  , persistent = True
+--  , overrideRedirect = True
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template = "%StdinReader% }{ %battery%  |  Vol: %vol%  |  %date% "
+  , commands = [ 
+      Run StdinReader
+    , Run Date "%_d %b  <fc=#ee9a00>%H:%M</fc>" "date" 100
+    , Run Com "/home/robin/.xmonad/volume.py" ["print_volume"] "vol" 50
+    , Run Battery [ "--template" , "Batt: <acstatus>"
+                  , "--Low"      , "10"        -- units: %
+                  , "--High"     , "80"        -- units: %
+                  , "--low"      , "red"
+                  , "--normal"   , "orange"
+                  , "--high"     , "green"
+                  , "--" -- battery specific options
+                  , "-o"	, "<left>% <fc=#909090>(<timeleft>)</fc>" -- discharging status
+                  , "-O"	, "<left>% AC" -- AC "on" status
+                  , "-i"	, "<left>% AC" -- charged status
+                  ] 100
+    ]
+}

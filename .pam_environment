@@ -1,0 +1,5 @@
+GTAGSLABEL=pygments
+GTAGSCONF=/usr/share/gtags/gtags.conf
+XDG_CONFIG_HOME=/home/robin/.config
+XDG_CACHE_HOME=/home/robin/.cache
+XDG_DATA_HOME=/home/robin/.local/share
