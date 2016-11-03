@@ -3,7 +3,7 @@ Config {
   , bgColor = "#101010"
   , fgColor = "grey"
   , alpha = 192
-  , position = Top
+  , position = Bottom
 --  , lowerOnStart = True
 --  , persistent = True
 --  , overrideRedirect = True
