@@ -9,7 +9,7 @@ Config {
 --  , overrideRedirect = True
   , sepChar = "%"
   , alignSep = "}{"
-  , template = "%StdinReader% }{ %battery%  |  Vol: %vol%  |  %date% "
+  , template = "%StdinReader% }{ Disk: %disku%     %battery%     Vol: %vol%     %date% "
   , commands = [ 
       Run StdinReader
     , Run Date "%_d %b  <fc=#ee9a00>%H:%M</fc>" "date" 100
@@ -25,5 +25,6 @@ Config {
                   , "-O"	, "<left>% AC" -- AC "on" status
                   , "-i"	, "<left>% AC" -- charged status
                   ] 100
+    , Run DiskU [("/", "<used> / <size>")] ["-L", "20", "-H", "50", "-m", "1", "-p", "3"] 100
     ]
 }

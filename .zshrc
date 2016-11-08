@@ -56,8 +56,3 @@ precmd () { vcs_info }
 PROMPT='%F{5}[%F{2}%n%F{5}] %F{3}%3~ ${vcs_info_msg_0_} %f%# '
 
 
-
-
-
-
-[ -s "/home/robin/.kre/kvm/kvm.sh" ] && . "/home/robin/.kre/kvm/kvm.sh" # Load kvm

@@ -1,4 +1,4 @@
-; basic behavior and looks
+;; basic behavior and looks
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -32,7 +32,7 @@
 (require 'diminish)
 (require 'bind-key)
 
-; syntax highlighting
+;; syntax highlighting
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 (load-theme 'wombat t)
@@ -42,7 +42,7 @@
           (set-face-attribute face nil :weight 'normal)))
  (face-list))
 
-; highlight current line
+;; highlight current line
 (defface hl-line '((t (:background "#101010")))
   "Face to use for `hl-line-face'." :group 'hl-line)
 (setq hl-line-face 'hl-line)
@@ -51,7 +51,7 @@
 (global-linum-mode 1) ; line numbers
 
 
-; text encoding
+;; text encoding
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (setq default-buffer-file-coding-system 'utf-8)
@@ -60,8 +60,29 @@
 (if (eq system-type 'windows-nt)
     (set-clipboard-coding-system 'utf-16le-dos))
 
+;; reload changed files automatically
+(global-auto-revert-mode t)
 
-; ssh file editing
+;; make page up/down able to scroll to very first or last line
+(defun do-scroll-up ()
+  (interactive)
+  (condition-case nil
+      (scroll-down) (beginning-of-buffer (goto-char (point-min)))))
+(defun do-scroll-down ()
+  (interactive)
+  (condition-case nil
+      (scroll-up) (end-of-buffer (goto-char (point-max)))))
+(global-set-key (kbd "<prior>") 'do-scroll-up)
+(global-set-key (kbd "<next>") 'do-scroll-down)
+(global-set-key (kbd "M-v") 'do-scroll-up)
+(global-set-key (kbd "C-v") 'do-scroll-down)
+
+
+
+
+
+
+;; ssh file editing
 (if (eq system-type 'windows-nt)
     (setq tramp-default-method "plink")
     (setq tramp-default-method "ssh"))
@@ -69,7 +90,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.xmobarrc\\'" . haskell-mode))
 
-; "find" on windows is not what we want. we want GNU find which we can name "find2"
+;; "find" on windows is not what we want. we want GNU find which we can name "find2"
 (when (executable-find "find2")
   (setq find-program "find2"))
 
@@ -116,7 +137,7 @@
   (global-set-key "\M-x" 'ido-execute-command))
 
 
-; reload config file when saved
+;; reload config file when saved
 (add-hook 'after-save-hook 'maybe-reload-config)
 (defun maybe-reload-config ()
   (let ((suffix (substring (buffer-file-name) -6 nil)))
@@ -126,7 +147,7 @@
   (interactive)
   (load-file (expand-file-name "~/.emacs")))
 
-; shortcut for opening the config file
+;; shortcut for opening the config file
 (defun find-config ()
   (interactive)
   (find-file (expand-file-name "~/.emacs")))
@@ -159,6 +180,21 @@
 		`(lambda () "Refresh the buffer from the disk (prompt of modified)."
 		   (interactive)
 		   (revert-buffer t (not (buffer-modified-p)) t)))
+
+(defun rename-file-and-buffer ()
+  "Rename the current buffer and file it is visiting."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (message "Buffer is not visiting a file!")
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond
+         ((vc-backend filename) (vc-rename-file filename new-name))
+         (t
+          (rename-file filename new-name t)
+          (set-visited-file-name new-name t t)))))))
+(global-set-key (kbd "C-c r")  'rename-file-and-buffer)
+
 
 
 (defun run-current-file ()
@@ -223,6 +259,7 @@ If point was already at that position, move point to beginning of line."
 (global-set-key (kbd "C-a") 'smart-beginning-of-line)
 
 
+
 (defun dos2unix ()
   "Replace DOS eolns CR LF with Unix eolns CR"
   (interactive)
@@ -259,8 +296,10 @@ If point was already at that position, move point to beginning of line."
   (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
 
 (defun golisp ()
+  (interactive)
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
-  (setq inferior-lisp-program "sbcl"))
+  (setq inferior-lisp-program "sbcl")
+  (slime))
 
 
 (add-hook 'c-mode-common-hook
@@ -273,8 +312,9 @@ If point was already at that position, move point to beginning of line."
 
 (c-set-offset 'innamespace 0)
 
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-; autoindent yanked text
+;; autoindent yanked text
 (dolist (command '(yank yank-pop))
    (eval `(defadvice ,command (after indent-region activate)
             (and (not current-prefix-arg)
@@ -296,5 +336,24 @@ If point was already at that position, move point to beginning of line."
 (put 'dired-find-alternate-file 'disabled nil)
 
 
+(defun q-r-word ()
+  "Query-replace whole words."
+  (interactive)
+  (let ((current-prefix-arg  t))
+    (call-interactively #'query-replace)))
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (company rtags use-package typescript-mode s python-mode projectile paredit mic-paren helm haskell-mode flycheck flx-ido csharp-mode auto-complete))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
