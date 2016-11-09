@@ -115,8 +115,8 @@
   :config
   (when (executable-find "find2")
     (setq projectile-generic-command "find2 . -type f -print0"))
-  (setq projectile-indexing-method 'native)
-  (setq projectile-enable-caching t)
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching nil)
   (projectile-global-mode))
 
 (use-package flx-ido
