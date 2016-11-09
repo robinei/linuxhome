@@ -1,4 +1,6 @@
 ;; basic behavior and looks
+(setq gc-cons-threshold 20000000)
+(setq ad-redefinition-action 'accept)
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -15,8 +17,6 @@
 	(horizontal-scroll-bars . nil)
 	(menu-bar-lines . 0)
 	(tool-bar-lines . 0)))
-
-(setq default-directory (concat (getenv "HOME") "/"))
 
 ;; syntax highlighting
 (global-font-lock-mode t)
@@ -67,6 +67,12 @@
 (global-set-key (kbd "M-v") 'do-scroll-up)
 (global-set-key (kbd "C-v") 'do-scroll-down)
 
+;; ido
+(ido-mode 1)
+(ido-everywhere 1)
+(add-to-list 'ido-ignore-files "\\.DS_Store")
+
+(setq default-directory (concat (getenv "HOME") "/"))
 
 
 
@@ -109,40 +115,6 @@
   (paren-activate)
   (setq paren-priority 'close))
 
-(use-package projectile
-  :ensure t
-  :diminish projectile-mode
-  :config
-  (when (executable-find "find2")
-    (setq projectile-generic-command "find2 . -type f -print0"))
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-enable-caching nil)
-  (projectile-global-mode))
-
-(use-package flx-ido
-  :ensure t
-  :config
-  (ido-mode 1)
-  (ido-everywhere 1)
-  (flx-ido-mode 1)
-  (setq ido-enable-flex-matching t)
-  (setq ido-use-faces nil) ; disable ido faces to see flx highlights.
-  (setq ido-execute-command-cache nil)
-  (defun ido-execute-command ()
-    (interactive)
-    (call-interactively
-     (intern
-      (ido-completing-read
-       "M-x "
-       (progn
-	 (unless ido-execute-command-cache
-	   (mapatoms (lambda (s)
-		       (when (commandp s)
-			 (setq ido-execute-command-cache
-			       (cons (format "%S" s) ido-execute-command-cache))))))
-	 ido-execute-command-cache)))))
-  (global-set-key "\M-x" 'ido-execute-command))
-
 (use-package paredit
   :ensure t
   :diminish paredit-mode
@@ -156,6 +128,39 @@
   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
 
+(use-package flx
+  :ensure t
+  :config
+  (flx-ido-mode 1)
+  (setq ido-use-faces nil))
+
+(use-package ido-ubiquitous
+  :ensure t
+  :init
+  ;; Fix ido-ubiquitous for newer packages
+  (defmacro ido-ubiquitous-use-new-completing-read (cmd package)
+    `(eval-after-load ,package
+       '(defadvice ,cmd (around ido-ubiquitous-new activate)
+          (let ((ido-ubiquitous-enable-compatibility nil))
+            ad-do-it)))))
+
+(use-package smex
+  :ensure t
+  :defer t
+  :bind (("M-x" . smex)
+         ("M-X" . smex-major-mode-commands))
+  :config
+  (smex-initialize))
+
+(use-package projectile
+  :ensure t
+  :diminish projectile-mode
+  :config
+  (when (executable-find "find2")
+    (setq projectile-generic-command "find2 . -type f -print0"))
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching nil)
+  (projectile-global-mode))
 
 
 
@@ -349,6 +354,12 @@ If point was already at that position, move point to beginning of line."
   (let ((current-prefix-arg  t))
     (call-interactively #'query-replace)))
 
+;; emacs server
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -364,3 +375,4 @@ If point was already at that position, move point to beginning of line."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
