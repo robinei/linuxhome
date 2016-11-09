@@ -18,20 +18,6 @@
 
 (setq default-directory (concat (getenv "HOME") "/"))
 
-(require 'package)
-(setq package-enable-at-startup nil)   ; To prevent initialising twice
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
-
 ;; syntax highlighting
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
@@ -48,8 +34,12 @@
 (setq hl-line-face 'hl-line)
 (global-hl-line-mode t)
 
-(global-linum-mode 1) ; line numbers
+;; show line numbers
+(global-linum-mode 1)
 
+;; make jarring vertical split line meld with margin/fringe
+(set-face-attribute 'vertical-border nil :foreground
+		    (face-attribute 'fringe :background))
 
 ;; text encoding
 (prefer-coding-system 'utf-8)
@@ -96,6 +86,23 @@
 
 
 
+
+
+
+(require 'package)
+(setq package-enable-at-startup nil)   ; To prevent initialising twice
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
+
 (use-package mic-paren
   :ensure t
   :config
@@ -135,6 +142,21 @@
 			       (cons (format "%S" s) ido-execute-command-cache))))))
 	 ido-execute-command-cache)))))
   (global-set-key "\M-x" 'ido-execute-command))
+
+(use-package paredit
+  :ensure t
+  :diminish paredit-mode
+  :init
+  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  :config
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
+
+
 
 
 ;; reload config file when saved
@@ -282,19 +304,6 @@ If point was already at that position, move point to beginning of line."
 (global-set-key [C-f1] 'show-file-name)
 
 
-(use-package paredit
-  :ensure t
-  :diminish paredit-mode
-  :init
-  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-  :config
-  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
-
 (defun golisp ()
   (interactive)
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -309,9 +318,7 @@ If point was already at that position, move point to beginning of line."
 		  c-indent-level 4)
 	    (setq indent-tabs-mode nil)
 	    (local-set-key  (kbd "C-c o") 'ff-get-other-file)))
-
 (c-set-offset 'innamespace 0)
-
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 ;; autoindent yanked text
