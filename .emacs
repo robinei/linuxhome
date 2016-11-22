@@ -128,7 +128,7 @@
   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
   (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
 
-(use-package flx
+(use-package flx-ido
   :ensure t
   :config
   (flx-ido-mode 1)
@@ -161,6 +161,37 @@
   (setq projectile-indexing-method 'alien)
   (setq projectile-enable-caching nil)
   (projectile-global-mode))
+
+(use-package flycheck
+  :ensure t
+  :diminish flycheck-mode
+  :commands flycheck-mode)
+
+(use-package flycheck-haskell
+  :ensure t
+  :commands flycheck-haskell-setup)
+
+(defun fix-imports ()
+  "fixes imports"
+  (interactive)
+  (sort-lines nil (region-beginning) (region-end))
+  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)#-"))
+
+(use-package haskell-mode
+  :ensure t
+  :mode "\\.hs\\'"
+  :commands haskell-mode
+  :bind ("C-c C-s" . fix-imports)
+  :config
+  (custom-set-variables
+   '(haskell-ask-also-kill-buffers nil)
+   '(haskell-process-type (quote stack-ghci))
+   '(haskell-interactive-popup-errors nil))
+  (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (add-hook 'haskell-mode-hook 'flycheck-mode)
+  (add-hook 'haskell-mode-hook (lambda () (add-hook 'before-save-hook 'haskell-mode-format-imports nil t))))
+
 
 
 

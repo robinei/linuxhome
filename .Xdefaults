@@ -28,5 +28,11 @@ Xft.hinting: 1
 Xft.antialias: 1
 Xft.rgba: rgb
 
+Emacs.font: Envy Code R-10
+Emacs.fontBackend: xft
+Emacs.menuBar: off
+Emacs.toolBar: -1
+Emacs.verticalScrollBars: off
+
 
 

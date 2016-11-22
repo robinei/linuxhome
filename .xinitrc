@@ -1,12 +1,11 @@
 #!/bin/bash
 
-xcompmgr -c &
-#compton -cGb
+compton --config ~/.config/compton.conf -b
 xsetroot -cursor_name left_ptr
-#feh --bg-center .local/wallpapers/moon-earth_00384532.jpg
-pcmanfm --desktop -d &
-xrandr --output LVDS --set "scaling mode" "Full aspect"
-emacs --daemon &
+feh --bg-center ~/Documents/Wallpapers/kyoto.jpg
+#pcmanfm --desktop -d &
+xrandr --output eDP1 --set "scaling mode" "Full aspect"
+setxkbmap -option ctrl:nocaps
 
 exec xmonad
 

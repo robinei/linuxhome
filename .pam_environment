@@ -6,3 +6,9 @@ XDG_CACHE_HOME=/home/robin/.cache
 XDG_DATA_HOME=/home/robin/.local/share
 
 MOZ_DISABLE_GMP_SANDBOX=1
+
+QT_STYLE_OVERRIDE=gtk2
+
+BROWSER=firefox
+EDITOR=emacs
+
