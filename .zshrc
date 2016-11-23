@@ -23,7 +23,6 @@ bindkey "${terminfo[kend]}" end-of-line
 alias ls='ls --color=auto'
 alias vscode='/opt/visual-studio-code/code'
 alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
-alias emacs='emacs -nw'
 
 
 export CLICOLOR=TRUE

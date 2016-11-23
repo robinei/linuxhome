@@ -9,7 +9,7 @@ Config {
 --  , overrideRedirect = True
   , sepChar = "%"
   , alignSep = "}{"
-  , template = "%StdinReader% }{ Disk: %disku%     %battery%     Vol: %vol%     %date% "
+  , template = " <action=`xmenud`>  <fc=#ff8888>[Menu]</fc>  </action>  %StdinReader% }{ Disk: %disku%     %battery%     Vol: %vol%     %date% "
   , commands = [ 
       Run StdinReader
     , Run Date "%_d %b  <fc=#ee9a00>%H:%M</fc>" "date" 100
