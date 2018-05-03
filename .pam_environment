@@ -7,8 +7,13 @@ XDG_DATA_HOME=/home/robin/.local/share
 
 MOZ_DISABLE_GMP_SANDBOX=1
 
+_JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
+
 QT_STYLE_OVERRIDE=gtk2
 
-BROWSER=firefox
+BROWSER=chromium-dev
 EDITOR=em
+
+SDL_FORCE_SOUNDFONTS=1
+SDL_SOUNDFONTS=/usr/share/soundfonts/choriumreva.sf2
 
